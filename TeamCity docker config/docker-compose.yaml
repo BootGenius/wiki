@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  teamcity:
+    image: jetbrains/teamcity-server:latest
+    privileged: true
+    ports:
+      - "8111:8111"
+    volumes:
+      - type: bind
+        source: /host_mnt/f/TeamCity/data
+        target: /data/teamcity_server/datadir
+      - type: bind
+        source: /host_mnt/f/TeamCity/logs
+        target: /opt/teamcity/logs
+    deploy:
+        resources:
+            limits:
+              memory: 4096M
+            reservations:
+              memory: 2048M   
+  build_agent_1:
+    restart: always
+    privileged: true
+    user: root
+    image: jetbrains/teamcity-agent:latest
+    environment:
+      - SERVER_URL=teamcity:8111
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/conf
+        target: /data/teamcity_agent/conf
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/work
+        target: /opt/buildagent/work
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/temp
+        target: /opt/buildagent/temp
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/tools
+        target: /opt/buildagent/tools
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/plugins
+        target: /opt/buildagent/plugins
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/system
+        target: /opt/buildagent/system
