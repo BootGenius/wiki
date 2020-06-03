@@ -26,8 +26,12 @@ services:
     image: jetbrains/teamcity-agent:latest
     environment:
       - SERVER_URL=teamcity:8111
+      - DOCKER_IN_DOCKER=start
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      #- /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /host_mnt/f/TeamCity/agent1/docker
+        target: /var/lib/docker
       - type: bind
         source: /host_mnt/f/TeamCity/agent1/conf
         target: /data/teamcity_agent/conf
